@@ -7,7 +7,8 @@ import fr.tp.inf112.projects.canvas.model.Style;
 import fr.tp.inf112.projects.robotsim.model.shapes.PositionedShape;
 import fr.tp.inf112.projects.canvas.model.Shape;
 
-public abstract class Component implements Figure, Serializable {
+// Add Runnable implementation
+public abstract class Component implements Figure, Serializable, Runnable {
 	
 	private static final long serialVersionUID = -5960950869184030220L;
 
@@ -18,6 +19,9 @@ public abstract class Component implements Figure, Serializable {
 	private final PositionedShape positionedShape;
 	
 	private final String name;
+	
+	// Loop sleep interval for component threads
+    private static final int LOOP_SLEEP_MS = 50;
 
 	protected Component(final Factory factory,
 						final PositionedShape shape,
@@ -136,4 +140,18 @@ public abstract class Component implements Figure, Serializable {
 	public boolean isSimulationStarted() {
 		return getFactory().isSimulationStarted();
 	}
+	
+	@Override
+    public void run() {
+        // Only components attached to a factory participate
+        while (isSimulationStarted()) {
+            behave();
+            try {
+                Thread.sleep(LOOP_SLEEP_MS);
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+                break;
+            }
+        }
+    }
 }

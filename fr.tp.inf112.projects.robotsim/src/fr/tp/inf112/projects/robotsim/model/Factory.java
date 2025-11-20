@@ -9,6 +9,7 @@ import fr.tp.inf112.projects.canvas.controller.Observer;
 import fr.tp.inf112.projects.canvas.model.Canvas;
 import fr.tp.inf112.projects.canvas.model.Figure;
 import fr.tp.inf112.projects.canvas.model.Style;
+import fr.tp.inf112.projects.robotsim.model.motion.Motion;
 import fr.tp.inf112.projects.robotsim.model.shapes.PositionedShape;
 import fr.tp.inf112.projects.robotsim.model.shapes.RectangularShape;
 
@@ -23,7 +24,8 @@ public class Factory extends Component implements Canvas, Observable {
 
 	private transient List<Observer> observers;
 
-	private transient boolean simulationStarted;
+	private transient volatile boolean simulationStarted;
+	
 	
 	public Factory(final int width,
 				   final int height,
@@ -99,22 +101,14 @@ public class Factory extends Component implements Canvas, Observable {
 	}
 
 	public void startSimulation() {
-		if (!isSimulationStarted()) {
-			this.simulationStarted = true;
-			notifyObservers();
+        if (!isSimulationStarted()) {
+            this.simulationStarted = true;
+            notifyObservers();
 
-			while (isSimulationStarted()) {
-				behave();
-				
-				try {
-					Thread.sleep(100);
-				}
-				catch (final InterruptedException ex) {
-					System.err.println("Simulation was abruptely interrupted");
-				}
-			}
-		}
-	}
+            // Spawn component threads once
+            behave();
+        }
+    }
 
 	public void stopSimulation() {
 		if (isSimulationStarted()) {
@@ -125,15 +119,13 @@ public class Factory extends Component implements Canvas, Observable {
 	}
 
 	@Override
-	public boolean behave() {
-		boolean behaved = true;
-		
-		for (final Component component : getComponents()) {
-			behaved = component.behave() || behaved;
-		}
-		
-		return behaved;
-	}
+    public boolean behave() {
+        // Start each component in its own thread
+        for (final Component component : getComponents()) {
+            new Thread(component, component.getName() + "-thread").start();
+        }
+        return true;
+    }
 	
 	@Override
 	public Style getStyle() {
@@ -184,4 +176,30 @@ public class Factory extends Component implements Canvas, Observable {
 		
 		return null;
 	}
+
+	// Synchronized move to check and move atomically
+    public synchronized int moveComponent(final Motion motion,
+                                          final Component componentToMove) {
+        if (motion == null || componentToMove == null) {
+            return 0;
+        }
+
+        // Determine target cell footprint 
+        final Position target = motion.getTargetPosition(); 
+        if (target == null) {
+            return 0;
+        }
+
+        final RectangularShape targetShape =
+                new RectangularShape(target.getxCoordinate(), target.getyCoordinate(), 2, 2);
+
+        // Block if occupied by obstacle or another mobile component
+        if (hasObstacleAt(targetShape) || hasMobileComponentAt(targetShape, componentToMove)) {
+            return 0;
+        }
+
+        // Safe to move now 
+        return motion.moveToTarget();
+    }
+
 }

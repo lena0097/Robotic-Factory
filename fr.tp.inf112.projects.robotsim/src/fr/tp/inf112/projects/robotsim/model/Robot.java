@@ -118,15 +118,57 @@ public class Robot extends Component {
 		return targetComponentsIterator.hasNext() ? targetComponentsIterator.next() : null;
 	}
 	
+	
 	private int moveToNextPathPosition() {
-		final Motion motion = computeMotion();
-		
-		final int displacement = motion == null ? 0 : motion.moveToTarget();
-			
-		notifyObservers();
-		
-		return displacement;
-	}
+	final Motion motion = computeMotion();
+	// Delegate movement to the Factory so the check+move can be synchronized there.
+	int displacement = motion == null ? 0 : getFactory().moveComponent(motion, this);
+
+        if (displacement != 0) {
+            notifyObservers();
+        }
+        else if (isLivelyLocked()) {
+            final Position freeNeighbouringPosition = findFreeNeighbouringPosition();
+            if (freeNeighbouringPosition != null) {
+                // Use the neighbour as a temporary escape position
+                this.memorizedTargetPosition = freeNeighbouringPosition;
+                final Motion escapeMotion = computeMotion();
+                displacement = escapeMotion == null ? 0 : escapeMotion.moveToTarget();
+                if (displacement != 0) {
+                    notifyObservers();
+                    // Clear memorized position so normal path steps resume
+                    this.memorizedTargetPosition = null;
+                    // Reset blocked state and recompute path from new position
+                    blocked = false;
+                    computePathToCurrentTargetComponent();
+                }
+            }
+        }
+        return displacement;
+    }
+
+    private Position findFreeNeighbouringPosition() {
+        final Position curr = getPosition();
+        final int step = 2;
+        final int[][] deltas = {
+                { step, 0 }, { -step, 0 }, { 0, step }, { 0, -step },
+                { step, step }, { -step, step }, { step, -step }, { -step, -step }
+        };
+
+        for (final int[] d : deltas) {
+            final int nx = curr.getxCoordinate() + d[0];
+            final int ny = curr.getyCoordinate() + d[1];
+            if (nx < 0 || ny < 0) {
+                continue;
+            }
+            final RectangularShape candidateShape = new RectangularShape(nx, ny, 2, 2);
+            if (!getFactory().hasObstacleAt(candidateShape)
+                    && !getFactory().hasMobileComponentAt(candidateShape, this)) {
+                return new Position(nx, ny);
+            }
+        }
+        return null;
+    }
 	
 	private void computePathToCurrentTargetComponent() {
 		final List<Position> currentPathPositions = pathFinder.findPath(this, currTargetComponent);
