@@ -46,11 +46,21 @@ public class FactoryPersistenceManager extends AbstractCanvasPersistenceManager 
 	@Override
 	public void persist(Canvas canvasModel)
 	throws IOException {
+		// If the canvas has no id, default to saving under project 'config/'
+		if (canvasModel.getId() == null || canvasModel.getId().trim().isEmpty()) {
+			final String defaultDir = "config";
+			final File dir = new File(defaultDir);
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+			canvasModel.setId(defaultDir + File.separator + "factory-" + System.currentTimeMillis() + ".ser");
+		}
+
 		try (
 			final OutputStream fileOutStream = new FileOutputStream(canvasModel.getId());
 			final OutputStream bufOutStream = new BufferedOutputStream(fileOutStream);
 			final ObjectOutputStream objOutStream = new ObjectOutputStream(bufOutStream);
-		) {	
+		) {
 			objOutStream.writeObject(canvasModel);
 		}
 	}

@@ -1,9 +1,20 @@
 package fr.tp.inf112.projects.robotsim.app;
 
 import java.awt.Component;
+import java.util.logging.Logger;
+import java.util.logging.Handler;
+import java.io.File;
 import java.util.Arrays;
 
 import javax.swing.SwingUtilities;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
+import javax.swing.AbstractAction;
+import javax.swing.JOptionPane;
+import java.awt.event.ActionEvent;
+import java.awt.event.KeyEvent;
+import java.awt.event.InputEvent;
+import java.io.IOException;
 
 import fr.tp.inf112.projects.canvas.model.impl.BasicVertex;
 import fr.tp.inf112.projects.canvas.view.CanvasViewer;
@@ -27,10 +38,22 @@ import fr.tp.inf112.projects.robotsim.model.shapes.RectangularShape;
 
 public class SimulatorApplication {
 
+	private static final Logger LOGGER = Logger.getLogger(SimulatorApplication.class.getName());
+
 	public static void main(String[] args) {
-		System.out.println("Starting the robot simulator...");
-		
-		System.out.println("With parameters " + Arrays.toString(args) + ".");
+		// Diagnostic prints to help locate logging configuration and output file
+		System.out.println("java.util.logging.config.file=" + System.getProperty("java.util.logging.config.file"));
+		System.out.println("user.dir=" + System.getProperty("user.dir"));
+		final File expectedLog = new File("config/simulator.log");
+		System.out.println("expected log absolute path=" + expectedLog.getAbsolutePath() + " exists=" + expectedLog.exists());
+		final java.util.logging.Logger root = java.util.logging.Logger.getLogger("");
+		System.out.println("root logger handlers:");
+		for (final Handler h : root.getHandlers()) {
+			System.out.println(" - " + h.getClass().getName());
+		}
+
+		LOGGER.info("Starting the robot simulator...");
+		LOGGER.config("With parameters " + Arrays.toString(args) + ".");
 		
 		final Factory factory = new Factory(200, 200, "Simple Test Puck Factory");
 		final Room room1 = new Room(factory, new RectangularShape(20, 20, 75, 75), "Production Room 1");
@@ -81,9 +104,74 @@ public class SimulatorApplication {
 			  
 			@Override
 	        public void run() {
-				final FileCanvasChooser canvasChooser = new FileCanvasChooser("factory", "Puck Factory");
-				final Component factoryViewer = new CanvasViewer(new SimulatorController(factory, new FactoryPersistenceManager(canvasChooser)));
+		final FileCanvasChooser canvasChooser = new FileCanvasChooser("factory", "Puck Factory");
+		// Use remote persistence manager (server must be started separately)
+		final fr.tp.inf112.projects.robotsim.persistence.RemoteFactoryPersistenceManager remoteMgr =
+			new fr.tp.inf112.projects.robotsim.persistence.RemoteFactoryPersistenceManager(canvasChooser, "localhost", 1957);
+		final Component factoryViewer = new CanvasViewer(new SimulatorController(factory, remoteMgr));
 				canvasChooser.setViewer(factoryViewer);
+
+				// Add a global quick-save binding (Ctrl+S) to save the canvas without a dialog.
+				// This won't change the File->Save Canvas dialog behaviour provided by the
+				// external chooser, but it gives a convenient automatic-save-on-action.
+				try {
+					if (factoryViewer instanceof JComponent) {
+						final JComponent jc = (JComponent) factoryViewer;
+						jc.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+								KeyStroke.getKeyStroke(KeyEvent.VK_S, InputEvent.CTRL_DOWN_MASK), "quickSave");
+						jc.getActionMap().put("quickSave", new AbstractAction() {
+							@Override
+							public void actionPerformed(ActionEvent e) {
+								// perform save in a background thread
+								new Thread(() -> {
+									try {
+										remoteMgr.persist(factory);
+										SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(jc,
+												"Saved factory id=" + factory.getId()));
+									} catch (final IOException ex) {
+										SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(jc,
+												"Failed to save: " + ex.getMessage(), "Save error", JOptionPane.ERROR_MESSAGE));
+									}
+								}, "quick-save-thread").start();
+							}
+						});
+					}
+				} catch (final Throwable ignore) {
+					// If anything goes wrong (class cast issues or missing libs), don't break startup
+				}
+				// Also intercept the File->Save Canvas menu action: when the user clicks the
+				// menu item (text contains both "save" and "canvas"), perform the same
+				// quick-save behaviour (no save dialog).
+				try {
+					final Component parentComp = factoryViewer instanceof Component ? (Component) factoryViewer : null;
+					java.awt.Toolkit.getDefaultToolkit().addAWTEventListener(evt -> {
+						if (evt instanceof java.awt.event.ActionEvent) {
+							final Object src = ((java.awt.event.ActionEvent) evt).getSource();
+							if (src instanceof javax.swing.JMenuItem) {
+								final javax.swing.JMenuItem mi = (javax.swing.JMenuItem) src;
+								final String txt = mi.getText();
+								if (txt != null) {
+									final String low = txt.toLowerCase();
+									if (low.contains("save") && low.contains("canvas")) {
+										// run save in background
+										new Thread(() -> {
+											try {
+												remoteMgr.persist(factory);
+												SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(parentComp,
+														"Saved factory id=" + factory.getId()));
+											} catch (final IOException ex) {
+												SwingUtilities.invokeLater(() -> JOptionPane.showMessageDialog(parentComp,
+														"Failed to save: " + ex.getMessage(), "Save error", JOptionPane.ERROR_MESSAGE));
+											}
+										}, "menu-quick-save-thread").start();
+									}
+								}
+							}
+						}
+					}, java.awt.AWTEvent.ACTION_EVENT_MASK);
+				} catch (final Throwable ignore) {
+					// non-fatal: if AWT listener cannot be installed, continue without menu interception
+				}
 				//new CanvasViewer(factory);
 			}
 		});
