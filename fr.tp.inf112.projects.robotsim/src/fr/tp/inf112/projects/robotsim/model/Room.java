@@ -39,6 +39,17 @@ public class Room extends Component {
 		areas = new ArrayList<>();
 		doors = new ArrayList<>();
 	}
+
+	/** No-arg constructor for Jackson */
+	protected Room() {
+		super();
+		leftWall = new RectangularShape(0, 0, 0, 0);
+		rightWall = new RectangularShape(0, 0, 0, 0);
+		topWall = new RectangularShape(0, 0, 0, 0);
+		bottomWall = new RectangularShape(0, 0, 0, 0);
+		areas = new ArrayList<>();
+		doors = new ArrayList<>();
+	}
 	
 	protected boolean addArea(final Area area) {
 		return areas.add(area);

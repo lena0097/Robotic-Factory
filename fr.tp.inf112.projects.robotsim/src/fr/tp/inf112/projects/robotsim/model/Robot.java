@@ -3,6 +3,7 @@ package fr.tp.inf112.projects.robotsim.model;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import fr.tp.inf112.projects.canvas.model.Style;
 import fr.tp.inf112.projects.canvas.model.impl.RGBColor;
@@ -20,22 +21,27 @@ public class Robot extends Component {
 
 	private static final Style BLOCKED_STYLE = new ComponentStyle(RGBColor.RED, RGBColor.BLACK, 3.0f, new float[]{4.0f});
 
-	private final Battery battery;
+	private Battery battery;
 	
 	private int speed;
 	
 	private List<Component> targetComponents;
 	
+	@JsonIgnore
 	private transient Iterator<Component> targetComponentsIterator;
 	
 	private Component currTargetComponent;
 	
+	@JsonIgnore
 	private transient Iterator<Position> currentPathPositionsIter;
-	
+
+	@JsonIgnore
 	private transient boolean blocked;
-	
+
+	@JsonIgnore
 	private Position memorizedTargetPosition;
-	
+
+	@JsonIgnore
 	private FactoryPathFinder pathFinder;
 
 	public Robot(final Factory factory,
@@ -147,6 +153,20 @@ public class Robot extends Component {
         return displacement;
     }
 
+	/** No-arg constructor for Jackson */
+	protected Robot() {
+		super();
+		this.battery = null;
+		speed = 5;
+		targetComponents = new ArrayList<>();
+		targetComponentsIterator = null;
+		currTargetComponent = null;
+		currentPathPositionsIter = null;
+		blocked = false;
+		memorizedTargetPosition = null;
+		pathFinder = null;
+	}
+
     private Position findFreeNeighbouringPosition() {
         final Position curr = getPosition();
         final int step = 2;
@@ -176,11 +196,34 @@ public class Robot extends Component {
 	}
 	
 	private Motion computeMotion() {
-		if (!currentPathPositionsIter.hasNext()) {
+		// Ensure the path iterator is initialized. It can be null after
+		// deserialization because it's transient, or if the path was not
+		// computed yet for the current target. Try to compute it on demand.
+		if (currentPathPositionsIter == null) {
+			if (currTargetComponent == null) {
+				// No target to compute a path for
+				blocked = true;
+				return null;
+			}
 
+			try {
+				computePathToCurrentTargetComponent();
+			} catch (final Exception e) {
+				// On any error while computing a path, mark as blocked and abort movement
+				blocked = true;
+				return null;
+			}
+
+			if (currentPathPositionsIter == null) {
+				// Path finder returned null or failed
+				blocked = true;
+				return null;
+			}
+		}
+
+		if (!currentPathPositionsIter.hasNext()) {
 			// There is no free path to the target
 			blocked = true;
-			
 			return null;
 		}
 		

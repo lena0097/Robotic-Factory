@@ -12,6 +12,11 @@ public class Puck extends Component {
 		super(factory, shape, name);
 	}
 
+	/** No-arg constructor for Jackson */
+	protected Puck() {
+		super();
+	}
+
 	@Override
 	public String toString() {
 		return super.toString() + "]";

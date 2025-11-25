@@ -12,6 +12,11 @@ public class Conveyor extends Component {
 		super(factory, shape, name);
 	}
 
+	/** No-arg constructor for Jackson */
+	protected Conveyor() {
+		super();
+	}
+
 	@Override
 	public String toString() {
 		return super.toString() + "]";

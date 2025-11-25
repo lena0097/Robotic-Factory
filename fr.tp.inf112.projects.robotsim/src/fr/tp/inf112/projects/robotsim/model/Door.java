@@ -89,6 +89,15 @@ public class Door extends Component {
 		this.room.addDoor(this);
 		this.open = open;
 	}
+
+	/** No-arg constructor for Jackson */
+	protected Door() {
+		super();
+		// final room must be initialized in this constructor
+		// set default value (no link to a Room after deserialization by default)
+		this.room = null;
+		this.open = false;
+	}
 	
 	@Override
 	public Style getStyle() {

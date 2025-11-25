@@ -21,6 +21,12 @@ public class Area extends Component {
 		
 		machine = null;
 	}
+
+	/** No-arg constructor for Jackson */
+	protected Area() {
+		super();
+		machine = null;
+	}
 	
 	protected void setMachine( final Machine machine ) {
 		this.machine = machine;

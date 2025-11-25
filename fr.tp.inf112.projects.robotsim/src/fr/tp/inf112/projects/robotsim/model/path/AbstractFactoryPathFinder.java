@@ -1,6 +1,8 @@
 package fr.tp.inf112.projects.robotsim.model.path;
 
 import java.io.Serializable;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
@@ -21,7 +23,10 @@ public abstract class AbstractFactoryPathFinder<Graph, Vertex> implements Factor
 	
 	private final int resolution;
 	
+	@com.fasterxml.jackson.annotation.JsonIgnore
 	private transient Graph graph;
+
+	private static final Logger LOG = Logger.getLogger(AbstractFactoryPathFinder.class.getName());
 
 	public AbstractFactoryPathFinder(final Factory factoryModel,
 									 final int resolution) {
@@ -67,7 +72,11 @@ public abstract class AbstractFactoryPathFinder<Graph, Vertex> implements Factor
 				}
 			}
 			
-			System.out.println(graph.toString());
+			// The graph can be large; avoid printing to stdout (floods consoles).
+			// Use logger at DEBUG level so this can be enabled when needed.
+			if (LOG.isLoggable(Level.FINE)) {
+				LOG.log(Level.FINE, "Built graph: {0}", graph);
+			}
 		}
 	}
 	

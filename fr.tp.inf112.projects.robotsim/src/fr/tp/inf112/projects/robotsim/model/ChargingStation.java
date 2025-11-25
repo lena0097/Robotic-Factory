@@ -23,6 +23,12 @@ public class ChargingStation extends Component {
 		charging = false;
 	}
 
+	/** No-arg constructor for Jackson */
+	protected ChargingStation() {
+		super();
+		charging = false;
+	}
+
 	@Override
 	public String toString() {
 		return super.toString() + "]";

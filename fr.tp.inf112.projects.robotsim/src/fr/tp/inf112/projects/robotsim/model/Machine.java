@@ -15,6 +15,11 @@ public class Machine extends Component {
 		area.setMachine(this);
 	}
 
+	/** No-arg constructor for Jackson */
+	protected Machine() {
+		super();
+	}
+
 	@Override
 	public String toString() {
 		return super.toString() + "]";

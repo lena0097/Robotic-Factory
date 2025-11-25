@@ -9,19 +9,20 @@ import fr.tp.inf112.projects.canvas.model.Shape;
 
 // Add Runnable implementation
 public abstract class Component implements Figure, Serializable, Runnable {
-	
+
 	private static final long serialVersionUID = -5960950869184030220L;
 
 	private String id;
 
-	private final Factory factory;
-	
-	private final PositionedShape positionedShape;
-	
-	private final String name;
-	
+	@com.fasterxml.jackson.annotation.JsonBackReference
+	private Factory factory;
+
+	private PositionedShape positionedShape;
+
+	private String name;
+
 	// Loop sleep interval for component threads
-    private static final int LOOP_SLEEP_MS = 50;
+	private static final int LOOP_SLEEP_MS = 50;
 
 	protected Component(final Factory factory,
 						final PositionedShape shape,
@@ -33,6 +34,11 @@ public abstract class Component implements Figure, Serializable, Runnable {
 		if (factory != null) {
 			factory.addComponent(this);
 		}
+	}
+
+	/** No-arg constructor for Jackson */
+	protected Component() {
+		// fields will be populated by Jackson
 	}
 	
 	public String getId() {
@@ -55,9 +61,10 @@ public abstract class Component implements Figure, Serializable, Runnable {
 		return factory;
 	}
 
+	@com.fasterxml.jackson.annotation.JsonIgnore
 	@Override
 	public int getxCoordinate() {
-		return getPositionedShape().getxCoordinate();
+		return getPositionedShape() == null ? -1 : getPositionedShape().getxCoordinate();
 	}
 
 	protected boolean setxCoordinate(int xCoordinate) {
@@ -70,9 +77,10 @@ public abstract class Component implements Figure, Serializable, Runnable {
 		return false;
 	}
 
+	@com.fasterxml.jackson.annotation.JsonIgnore
 	@Override
 	public int getyCoordinate() {
-		return getPositionedShape().getyCoordinate();
+		return getPositionedShape() == null ? -1 : getPositionedShape().getyCoordinate();
 	}
 
 	protected boolean setyCoordinate(final int yCoordinate) {

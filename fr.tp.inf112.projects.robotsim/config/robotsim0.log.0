@@ -1,0 +1,67 @@
+Nov 20, 2025 11:38:19 AM fr.tp.inf112.projects.robotsim.app.SimulatorApplication main
+INFO: Starting the robot simulator...
+Nov 20, 2025 10:42:38 PM fr.tp.inf112.projects.robotsim.app.SimulatorApplication main
+INFO: Starting the robot simulator...
+Nov 20, 2025 10:48:31 PM fr.tp.inf112.projects.robotsim.app.SimulatorApplication main
+INFO: Starting the robot simulator...
+Nov 20, 2025 10:55:28 PM fr.tp.inf112.projects.robotsim.app.SimulatorApplication main
+INFO: Starting the robot simulator...
+Nov 20, 2025 11:09:01 PM fr.tp.inf112.projects.robotsim.app.SimulatorApplication main
+INFO: Starting the robot simulator...
+Nov 20, 2025 11:10:57 PM fr.tp.inf112.projects.robotsim.app.SimulatorApplication main
+INFO: Starting the robot simulator...
+Nov 20, 2025 11:14:52 PM fr.tp.inf112.projects.robotsim.app.SimulatorApplication main
+INFO: Starting the robot simulator...
+Nov 20, 2025 11:14:58 PM fr.tp.inf112.projects.robotsim.app.SimulatorController stopAnimation
+INFO: Factory auto-saved (on stop) with id=factory-1763676898297.ser
+Nov 21, 2025 11:29:11 PM fr.tp.inf112.projects.robotsim.app.SimulatorApplication main
+INFO: Starting the robot simulator...
+Nov 21, 2025 11:30:25 PM fr.tp.inf112.projects.robotsim.app.SimulatorApplication main
+INFO: Starting the robot simulator...
+Nov 21, 2025 11:30:43 PM fr.tp.inf112.projects.canvas.view.ControllerWorker done
+SEVERE: A problem occur while saving canvas.
+java.util.concurrent.ExecutionException: java.io.EOFException
+	at java.base/java.util.concurrent.FutureTask.report(FutureTask.java:122)
+	at java.base/java.util.concurrent.FutureTask.get(FutureTask.java:191)
+	at java.desktop/javax.swing.SwingWorker.get(SwingWorker.java:613)
+	at fr.tp.inf112.projects.canvas.view.ControllerWorker.done(ControllerWorker.java:28)
+	at java.desktop/javax.swing.SwingWorker$5.run(SwingWorker.java:750)
+	at java.desktop/javax.swing.SwingWorker$DoSubmitAccumulativeRunnable.run(SwingWorker.java:848)
+	at java.desktop/sun.swing.AccumulativeRunnable.run(AccumulativeRunnable.java:112)
+	at java.desktop/javax.swing.SwingWorker$DoSubmitAccumulativeRunnable.actionPerformed(SwingWorker.java:858)
+	at java.desktop/javax.swing.Timer.fireActionPerformed(Timer.java:311)
+	at java.desktop/javax.swing.Timer$DoPostEvent.run(Timer.java:243)
+	at java.desktop/java.awt.event.InvocationEvent.dispatch(InvocationEvent.java:318)
+	at java.desktop/java.awt.EventQueue.dispatchEventImpl(EventQueue.java:773)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:720)
+	at java.desktop/java.awt.EventQueue$4.run(EventQueue.java:714)
+	at java.base/java.security.AccessController.doPrivileged(AccessController.java:399)
+	at java.base/java.security.ProtectionDomain$JavaSecurityAccessImpl.doIntersectionPrivilege(ProtectionDomain.java:86)
+	at java.desktop/java.awt.EventQueue.dispatchEvent(EventQueue.java:742)
+	at java.desktop/java.awt.EventDispatchThread.pumpOneEventForFilters(EventDispatchThread.java:203)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForFilter(EventDispatchThread.java:124)
+	at java.desktop/java.awt.EventDispatchThread.pumpEventsForHierarchy(EventDispatchThread.java:113)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:109)
+	at java.desktop/java.awt.EventDispatchThread.pumpEvents(EventDispatchThread.java:101)
+	at java.desktop/java.awt.EventDispatchThread.run(EventDispatchThread.java:90)
+Caused by: java.io.EOFException
+	at java.base/java.io.ObjectInputStream$BlockDataInputStream.peekByte(ObjectInputStream.java:3214)
+	at java.base/java.io.ObjectInputStream.readObject0(ObjectInputStream.java:1684)
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:509)
+	at java.base/java.io.ObjectInputStream.readObject(ObjectInputStream.java:467)
+	at fr.tp.inf112.projects.robotsim.persistence.RemoteFactoryPersistenceManager.persist(RemoteFactoryPersistenceManager.java:67)
+	at fr.tp.inf112.projects.canvas.view.CanvasViewer$5.doInBackground(CanvasViewer.java:218)
+	at fr.tp.inf112.projects.canvas.view.CanvasViewer$5.doInBackground(CanvasViewer.java:1)
+	at java.desktop/javax.swing.SwingWorker$1.call(SwingWorker.java:304)
+	at java.base/java.util.concurrent.FutureTask.run(FutureTask.java:264)
+	at java.desktop/javax.swing.SwingWorker.run(SwingWorker.java:343)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(ThreadPoolExecutor.java:1136)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(ThreadPoolExecutor.java:635)
+	at java.base/java.lang.Thread.run(Thread.java:840)
+
+Nov 21, 2025 11:35:31 PM fr.tp.inf112.projects.robotsim.app.SimulatorApplication main
+INFO: Starting the robot simulator...
+Nov 21, 2025 11:37:31 PM fr.tp.inf112.projects.robotsim.app.SimulatorApplication main
+INFO: Starting the robot simulator...
+Nov 25, 2025 5:28:37 PM fr.tp.inf112.projects.robotsim.app.SimulatorApplication main
+INFO: Starting the robot simulator...

@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import fr.tp.inf112.projects.canvas.controller.Observable;
 import fr.tp.inf112.projects.canvas.controller.Observer;
 import fr.tp.inf112.projects.canvas.model.Canvas;
@@ -20,10 +22,13 @@ public class Factory extends Component implements Canvas, Observable {
 	private static final ComponentStyle DEFAULT = new ComponentStyle(5.0f);
 
 
-    private final List<Component> components;
+	@com.fasterxml.jackson.annotation.JsonManagedReference
+	private final List<Component> components;
 
+	@com.fasterxml.jackson.annotation.JsonIgnore
 	private transient List<Observer> observers;
 
+	@com.fasterxml.jackson.annotation.JsonIgnore
 	private transient volatile boolean simulationStarted;
 	
 	
@@ -36,8 +41,16 @@ public class Factory extends Component implements Canvas, Observable {
 		observers = null;
 		simulationStarted = false;
 	}
+
+	/** No-arg constructor for Jackson */
+	protected Factory() {
+		super();
+		components = new ArrayList<>();
+		observers = null;
+		simulationStarted = false;
+	}
 	
-	protected List<Observer> getObservers() {
+	public List<Observer> getObservers() {
 		if (observers == null) {
 			observers = new ArrayList<>();
 		}
@@ -55,7 +68,7 @@ public class Factory extends Component implements Canvas, Observable {
 		return getObservers().remove(observer);
 	}
 	
-	protected void notifyObservers() {
+	public void notifyObservers() {
 		for (final Observer observer : getObservers()) {
 			observer.modelChanged();
 		}
@@ -81,12 +94,12 @@ public class Factory extends Component implements Canvas, Observable {
 		return false;
 	}
 
-	protected List<Component> getComponents() {
+	public List<Component> getComponents() {
 		return components;
 	}
 
-	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
+	@JsonIgnore
 	public Collection<Figure> getFigures() {
 		return (Collection) components;
 	}
