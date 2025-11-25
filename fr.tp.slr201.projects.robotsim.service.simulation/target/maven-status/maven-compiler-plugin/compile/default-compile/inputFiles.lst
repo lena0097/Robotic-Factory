@@ -1,0 +1,13 @@
+/home/elena/Desktop/robotic-factory-simulator/fr.tp.slr201.projects.robotsim.service.simulation/src/main/java/fr/tp/slr201/projects/robotsim/service/simulation/dto/ComponentDTO.java
+/home/elena/Desktop/robotic-factory-simulator/fr.tp.slr201.projects.robotsim.service.simulation/src/main/java/fr/tp/slr201/projects/robotsim/service/simulation/config/SimulationKafkaConfig.java
+/home/elena/Desktop/robotic-factory-simulator/fr.tp.slr201.projects.robotsim.service.simulation/src/main/java/fr/tp/slr201/projects/robotsim/service/simulation/Application.java
+/home/elena/Desktop/robotic-factory-simulator/fr.tp.slr201.projects.robotsim.service.simulation/src/main/java/fr/tp/slr201/projects/robotsim/service/simulation/config/JacksonConfig.java
+/home/elena/Desktop/robotic-factory-simulator/fr.tp.slr201.projects.robotsim.service.simulation/src/main/java/fr/tp/slr201/projects/robotsim/service/simulation/dto/FactoryDTO.java
+/home/elena/Desktop/robotic-factory-simulator/fr.tp.slr201.projects.robotsim.service.simulation/src/main/java/fr/tp/slr201/projects/robotsim/service/simulation/persistence/PersistenceClient.java
+/home/elena/Desktop/robotic-factory-simulator/fr.tp.slr201.projects.robotsim.service.simulation/src/main/java/fr/tp/slr201/projects/robotsim/service/simulation/kafka/KafkaFactoryModelChangeNotifier.java
+/home/elena/Desktop/robotic-factory-simulator/fr.tp.slr201.projects.robotsim.service.simulation/src/main/java/fr/tp/slr201/projects/robotsim/service/simulation/controller/SimulationController.java
+/home/elena/Desktop/robotic-factory-simulator/fr.tp.slr201.projects.robotsim.service.simulation/src/main/java/fr/tp/slr201/projects/robotsim/service/simulation/service/SimulationService.java
+/home/elena/Desktop/robotic-factory-simulator/fr.tp.slr201.projects.robotsim.service.simulation/src/main/java/fr/tp/slr201/projects/robotsim/service/simulation/dto/PositionDTO.java
+/home/elena/Desktop/robotic-factory-simulator/fr.tp.slr201.projects.robotsim.service.simulation/src/main/java/fr/tp/slr201/projects/robotsim/service/simulation/service/SimulationTask.java
+/home/elena/Desktop/robotic-factory-simulator/fr.tp.slr201.projects.robotsim.service.simulation/src/main/java/fr/tp/slr201/projects/robotsim/service/simulation/util/SimulationTopicsUtils.java
+/home/elena/Desktop/robotic-factory-simulator/fr.tp.slr201.projects.robotsim.service.simulation/src/main/java/com/example/demo/Application.java
