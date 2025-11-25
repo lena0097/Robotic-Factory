@@ -13,5 +13,6 @@
 	<classpathentry kind="lib" path="/home/elena/.m2/repository/com/fasterxml/jackson/core/jackson-databind/2.19.2/jackson-databind-2.19.2.jar"/>
 	<classpathentry kind="lib" path="/home/elena/.m2/repository/com/fasterxml/jackson/core/jackson-core/2.19.2/jackson-core-2.19.2.jar"/>
 	<classpathentry kind="lib" path="/home/elena/.m2/repository/com/fasterxml/jackson/core/jackson-annotations/2.19.2/jackson-annotations-2.19.2.jar"/>
+	<classpathentry kind="lib" path="/home/elena/Downloads/kafka_2.13-3.9.0/libs/kafka-clients-3.9.0.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

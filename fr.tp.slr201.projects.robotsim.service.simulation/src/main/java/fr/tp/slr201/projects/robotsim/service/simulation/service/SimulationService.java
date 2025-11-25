@@ -21,6 +21,9 @@ import fr.tp.slr201.projects.robotsim.service.simulation.persistence.Persistence
 import fr.tp.slr201.projects.robotsim.service.simulation.dto.ComponentDTO;
 import fr.tp.slr201.projects.robotsim.service.simulation.dto.FactoryDTO;
 import fr.tp.slr201.projects.robotsim.service.simulation.dto.PositionDTO;
+import fr.tp.slr201.projects.robotsim.service.simulation.kafka.KafkaFactoryModelChangeNotifier;
+import org.apache.kafka.clients.admin.AdminClient;
+import org.springframework.kafka.core.KafkaTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,11 +39,18 @@ public class SimulationService {
 
     private final boolean fallbackOnMissing;
 
+    private final KafkaTemplate<String, Factory> kafkaTemplate;
+    private final AdminClient adminClient;
+
     public SimulationService(@Value("${persistence.host:localhost}") final String host,
                              @Value("${persistence.port:1957}") final int port,
-                             @Value("${simulation.fallbackOnMissing:true}") final boolean fallbackOnMissing) {
+                             @Value("${simulation.fallbackOnMissing:true}") final boolean fallbackOnMissing,
+                             final KafkaTemplate<String, Factory> kafkaTemplate,
+                             final AdminClient adminClient) {
         this.persistenceClient = new PersistenceClient(host, port);
         this.fallbackOnMissing = fallbackOnMissing;
+        this.kafkaTemplate = kafkaTemplate;
+        this.adminClient = adminClient;
     }
 
     /**
@@ -72,6 +82,12 @@ public class SimulationService {
         }
 
         factory.setId(id);
+        // Set Kafka notifier so every model change publishes an event
+        try {
+            factory.setNotifier(new KafkaFactoryModelChangeNotifier(factory, kafkaTemplate, adminClient));
+        } catch (final Exception e) {
+            LOG.warn("Unable to configure Kafka notifier for id='{}': {}", id, e.getMessage());
+        }
 
         final SimulationTask task = new SimulationTask(factory);
         running.put(id, task);

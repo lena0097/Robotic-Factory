@@ -38,6 +38,18 @@
 			<artifactId>spring-boot-starter-web</artifactId>
 		</dependency>
 
+		<!-- Spring Kafka for event-driven publishing -->
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.kafka</groupId>
+			<artifactId>spring-kafka-test</artifactId>
+			<scope>test</scope>
+		</dependency>
+
 		<!-- Ensure Jackson is available explicitly for tests and runtime -->
 		<dependency>
 			<groupId>com.fasterxml.jackson.core</groupId>
@@ -49,6 +61,8 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
 		</dependency>
+
+		<!-- System-scoped simulator classes (model + canvas) -->
 	</dependencies>
 
 	<build>

@@ -91,6 +91,8 @@ public class SimulationTask implements Runnable {
                             }
                             c.getPosition().setxCoordinate(x + dx);
                             c.getPosition().setyCoordinate(y + dy);
+                            // Notify observers so Kafka events are published
+                            try { factory.notifyObservers(); } catch (Exception ignored) {}
                         }
                     }
                 } catch (Exception moveEx) {

@@ -12,6 +12,7 @@ import fr.tp.inf112.projects.canvas.model.Canvas;
 import fr.tp.inf112.projects.canvas.model.Figure;
 import fr.tp.inf112.projects.canvas.model.Style;
 import fr.tp.inf112.projects.robotsim.model.motion.Motion;
+import fr.tp.inf112.projects.robotsim.model.notifier.FactoryModelChangedNotifier;
 import fr.tp.inf112.projects.robotsim.model.shapes.PositionedShape;
 import fr.tp.inf112.projects.robotsim.model.shapes.RectangularShape;
 
@@ -30,6 +31,9 @@ public class Factory extends Component implements Canvas, Observable {
 
 	@com.fasterxml.jackson.annotation.JsonIgnore
 	private transient volatile boolean simulationStarted;
+
+	@com.fasterxml.jackson.annotation.JsonIgnore
+	private transient FactoryModelChangedNotifier notifier;
 	
 	
 	public Factory(final int width,
@@ -38,16 +42,18 @@ public class Factory extends Component implements Canvas, Observable {
 		super(null, new RectangularShape(0, 0, width, height), name);
 		
 		components = new ArrayList<>();
-		observers = null;
-		simulationStarted = false;
+	observers = null;
+	simulationStarted = false;
+	notifier = null;
 	}
 
 	/** No-arg constructor for Jackson */
 	protected Factory() {
 		super();
 		components = new ArrayList<>();
-		observers = null;
-		simulationStarted = false;
+	observers = null;
+	simulationStarted = false;
+	notifier = null;
 	}
 	
 	public List<Observer> getObservers() {
@@ -60,15 +66,25 @@ public class Factory extends Component implements Canvas, Observable {
 
 	@Override
 	public boolean addObserver(Observer observer) {
+		if (notifier != null) {
+			return notifier.addObserver(observer);
+		}
 		return getObservers().add(observer);
 	}
 
 	@Override
 	public boolean removeObserver(Observer observer) {
+		if (notifier != null) {
+			return notifier.removeObserver(observer);
+		}
 		return getObservers().remove(observer);
 	}
 	
 	public void notifyObservers() {
+		if (notifier != null) {
+			notifier.notifyObservers();
+			return;
+		}
 		for (final Observer observer : getObservers()) {
 			observer.modelChanged();
 		}
@@ -129,6 +145,14 @@ public class Factory extends Component implements Canvas, Observable {
 			
 			notifyObservers();
 		}
+	}
+
+	public FactoryModelChangedNotifier getNotifier() {
+		return notifier;
+	}
+
+	public void setNotifier(final FactoryModelChangedNotifier notifier) {
+		this.notifier = notifier;
 	}
 
 	@Override

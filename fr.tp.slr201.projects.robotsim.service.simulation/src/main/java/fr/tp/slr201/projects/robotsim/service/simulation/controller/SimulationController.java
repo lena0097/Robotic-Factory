@@ -40,7 +40,7 @@ public class SimulationController {
     /**
      * Start simulating a factory by id. Calls persistence server to read model, stores it and starts it.
      */
-    @PostMapping("/start")
+    @RequestMapping(value = "/start", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseEntity<Boolean> start(@RequestParam("id") final String id) {
         LOG.info("REST start called for id='{}'", id);
         final boolean ok = simulationService.startSimulation(id);
@@ -64,7 +64,7 @@ public class SimulationController {
     /**
      * Stop a running simulation.
      */
-    @PostMapping("/stop")
+    @RequestMapping(value = "/stop", method = {RequestMethod.POST, RequestMethod.GET})
     public ResponseEntity<Boolean> stop(@RequestParam("id") final String id) {
         LOG.info("REST stop called for id='{}'", id);
         final boolean ok = simulationService.stopSimulation(id);

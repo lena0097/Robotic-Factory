@@ -40,6 +40,20 @@ public class RemoteSimulatorController {
         this.listener = listener;
     }
 
+    // Expose polling state to consumers
+    public boolean isPolling() {
+        return polling.get();
+    }
+
+    // Deliver JSON from Kafka consumer
+    public void deliverFromJson(final String json) {
+        try {
+            if (json == null || json.isBlank()) return;
+            final Factory f = objectMapper.readValue(json, Factory.class);
+            if (listener != null) listener.onFactoryUpdate(f);
+        } catch (Exception ignored) { }
+    }
+
     public boolean startRemoteSimulation(final String id) throws IOException, InterruptedException {
         final HttpRequest req = HttpRequest.newBuilder()
                 .uri(URI.create(baseUrl + "/simulation/start?id=" + id))
@@ -118,5 +132,18 @@ public class RemoteSimulatorController {
             pollingThread.interrupt();
             pollingThread = null;
         }
+    }
+
+    // Event-driven consumption via Kafka
+    public void startEventConsumption(final String id) {
+        if (polling.get()) return;
+        polling.set(true);
+        pollingThread = new Thread(new FactorySimulationEventConsumer(this, id), "RemoteSimulatorController-kafka");
+        pollingThread.setDaemon(true);
+        pollingThread.start();
+    }
+
+    public void stopEventConsumption() {
+        stopPolling();
     }
 }
